@@ -4,11 +4,12 @@ Event-driven architecture (EDA) is a software design pattern in which decoupled 
 
 1-Install and Setup Apache Kafka.
 2-go to the intalled Path
-3-open comand prompt in current directory
+3-open command prompt in current directory
 4- Start the ZooKeeper service in command prompt:
   .\bin\windows\zookeeper-server-start.bat .\config\zookeeper.properties
-5- Start the Kafka broker service in new in command prompt:
- .\bin\kafka-server-start.bat .\config\server.properties
+5-open new command prompt windows in current directory  
+6- Start the Kafka broker service in new in command prompt:
+ .\bin\windows\kafka-server-start.bat .\config\server.properties
  -----------------------------
  OrderService  is producer
  EmailService && StockService are consumers
