@@ -55,6 +55,68 @@ Event-driven architecture (EDA) is a software design pattern in which decoupled 
 1. **Clone the Repository:**
    ```bash
    git clone https://github.com/your-username/Event-Driven_Microservices_SpringBoot_Kafka.git
+# Configuration
+
+## base-domains
+- **Java version:** 11
+- **Dependencies:** Spring Boot starter, Lombok
+
+## email-service
+- **Java version:** 11
+- **Dependencies:** Spring Boot starter, Spring Kafka, base-domains
+- **Kafka configuration:**
+  - Bootstrap servers: localhost:9092
+  - Consumer group ID: email
+  - Topic name: order_topics
+
+## order-service
+- **Java version:** 11
+- **Dependencies:** Spring Boot starter, Spring Kafka, base-domains
+- **Kafka configuration:**
+  - Bootstrap servers: localhost:9092
+  - Producer key serializer: String
+  - Producer value serializer: Json
+  - Topic name: order_topics
+
+## stock-service
+- **Java version:** 11
+- **Dependencies:** Spring Boot starter, Spring Kafka, base-domains
+- **Kafka configuration:**
+  - Bootstrap servers: localhost:9092
+  - Consumer group ID: stock
+  - Topic name: order_topics
+
+# Request Flow through Microservices
+
+1. **Client Request:**
+   - A client initiates a request, such as placing a new order, by interacting with the order-service API.
+
+2. **Order Creation:**
+   - The order-service receives the request and creates a new order. It generates an order event containing the details of the order.
+
+3. **Publishing to Kafka:**
+   - The order-service publishes the order event to the Kafka topic.
+
+4. **Consuming Order Event:**
+   - The email-service and stock-service are both subscribed to the Kafka topic.
+   - The email-service consumes the order event and sends an email notification to the customer regarding their order.
+   - The stock-service consumes the order event and updates the stock levels based on the order details.
+
+5. **Completion:**
+   - Once the order event has been processed by both the email-service and stock-service, the request is considered complete.
+   - The client receives a response indicating the successful processing of their request.
+
+# Restarting the System
+
+To restart the system:
+1. Ensure that Kafka and all microservices are running.
+2. If any component goes down, restart it by following the appropriate steps for each microservice.
+3. Verify that Kafka is operational and that the microservices can connect to it.
+4. Monitor the system for any issues or errors and address them as necessary.
+
+# Conclusion
+
+This architecture leverages event-driven communication to enable loose coupling between microservices, allowing for scalability, flexibility, and resilience. By breaking down the system into smaller, specialized services, each microservice can focus on its specific business domain, leading to easier maintenance and development. Additionally, the use of Apache Kafka as the event broker ensures reliable and efficient communication between services.
 
 
 
