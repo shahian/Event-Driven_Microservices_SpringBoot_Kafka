@@ -97,7 +97,7 @@ public class KafkaTopicConfig {
 
 The `KafkaTopicConfig` class is a Spring `@Configuration` component responsible for configuring Kafka topics within the application.
 
-## Key Points
+# Key Points
 
 - **Bean Declaration**: The class declares a bean method `newTopic()` annotated with `@Bean`, which returns a `NewTopic` instance.
   
@@ -155,6 +155,19 @@ The `OrderProducer` class is a Spring `@Service` component responsible for produ
 ## Overall Functionality
 
 The `OrderProducer` class abstracts away the complexity of interacting with Kafka, simplifying the process of producing messages within the event-driven architecture. Its encapsulation of Kafka-related functionalities allows other components to seamlessly send order events without the need for detailed Kafka-specific implementation.
+
+# Configuration Explanation
+
+## Application Server Port
+- `server.port=8080`: Specifies the port on which the application server will listen for incoming HTTP requests. In this case, it is configured to use port 8080.
+
+## Kafka Producer Configuration
+- `spring.kafka.producer.bootstrap-servers=localhost:9092`: Defines the list of Kafka brokers to which the Kafka producer will connect. Here, it specifies that the broker is running locally on port 9092.
+- `spring.kafka.producer.key-serializer=org.apache.kafka.common.serialization.StringSerializer`: Specifies the serializer to use for serializing the keys of Kafka producer records. In this case, it uses the StringSerializer provided by Apache Kafka.
+- `spring.kafka.producer.value-serializer=org.springframework.kafka.support.serializer.JsonSerializer`: Specifies the serializer to use for serializing the values of Kafka producer records. Here, it uses the JsonSerializer provided by Spring Kafka, which can serialize Java objects to JSON format.
+  
+## Kafka Topic Name
+- `spring.kafka.topic.name=order_topics`: Sets the name of the Kafka topic to which the producer will publish messages. In this case, it is configured to use a topic named "order_topics".
 ## stock-service
 - **Java version:** 11
 - **Dependencies:** Spring Boot starter, Spring Kafka, base-domains
@@ -162,7 +175,54 @@ The `OrderProducer` class abstracts away the complexity of interacting with Kafk
   - Bootstrap servers: localhost:9092
   - Consumer group ID: stock
   - Topic name: order_topics
+# Service Explanation
 
+## Order Consumer Service
+ ```bash
+@Service
+public class OrderConsumer {
+
+    private static Logger logger = LoggerFactory.getLogger(OrderConsumer.class);
+
+    @KafkaListener(
+            topics = "${spring.kafka.topic.name}",
+            groupId = "${spring.kafka.consumer.group-id}")
+    public void consume(OrderEvent orderEvent) {
+        logger.info(String.format("Order Event Received in Stock Service => %S ", orderEvent.toString()));
+
+        //save the order event into the database
+    }
+}
+ ```bash
+- `@Service`: An annotation from the Spring framework indicating that this class is a service component managed by Spring. It is used to denote that this class performs a service-related function.
+
+### Dependencies
+- `private static Logger logger`: A logger instance provided by SLF4J (Simple Logging Facade for Java) for logging messages.
+- `@KafkaListener`: An annotation from Spring Kafka used to create Kafka message listener endpoints. It specifies the topics to listen to and the consumer group ID.
+  - `topics = "${spring.kafka.topic.name}"`: Defines the Kafka topic from which this consumer will consume messages. It retrieves the topic name from the application's configuration.
+  - `groupId = "${spring.kafka.consumer.group-id}"`: Specifies the consumer group ID for this consumer. It retrieves the group ID from the application's configuration.
+
+### Methods
+- `public void consume(OrderEvent orderEvent)`: A method annotated with `@KafkaListener` that defines the message processing logic for consuming Kafka messages. It takes an `OrderEvent` object as a parameter, representing the consumed message.
+  - `logger.info(String.format("Order Event Received in Stock Service => %S ", orderEvent.toString()))`: Logs a message indicating that an order event has been received in the Stock Service.
+  - `//save the order event into the database`: Represents a placeholder comment indicating that the logic to save the order event into the database should be implemented here.
+    
+# Configuration Explanation
+
+## Application Server Port
+- `server.port=8082`: Specifies the port on which the application server will listen for incoming HTTP requests. Here, it is configured to use port 8082.
+
+## Kafka Consumer Configuration
+- `spring.kafka.consumer.bootstrap-servers=localhost:9092`: Defines the list of Kafka brokers to which the Kafka consumer will connect. It specifies that the broker is running locally on port 9092.
+- `spring.kafka.consumer.group-id=stock`: Specifies the consumer group ID for the Kafka consumer. This allows multiple consumers to coordinate and consume messages from Kafka topics efficiently.
+- `spring.kafka.consumer.auto-offset-reset=earliest`: Determines the starting offset for new consumer groups or when a consumer's offset is out of range. Setting it to "earliest" means that the consumer will start consuming messages from the earliest available offset.
+- `spring.kafka.consumer.key-deserializer=org.apache.kafka.common.serialization.StringDeserializer`: Specifies the deserializer to use for deserializing the keys of Kafka consumer records. Here, it uses the StringDeserializer provided by Apache Kafka.
+- `spring.kafka.consumer.value-deserializer=org.springframework.kafka.support.serializer.JsonDeserializer`: Specifies the deserializer to use for deserializing the values of Kafka consumer records. It uses the JsonDeserializer provided by Spring Kafka, which can deserialize JSON-formatted values into Java objects.
+- `spring.kafka.consumer.properties.spring.json.trusted.packages=*`: Configures trusted packages for deserialization when using the JsonDeserializer. In this case, it allows deserialization of JSON into objects from any package.
+  
+## Kafka Topic Name
+- `spring.kafka.topic.name=order_topics`: Sets the name of the Kafka topic from which the consumer will consume messages. Here, it is configured to consume messages from a topic named "order_topics".
+  
 # Request Flow through Microservices
 
 1. **Client Request:**
