@@ -37,6 +37,22 @@ Event-driven architecture (EDA) is a software design pattern in which decoupled 
    - Execute the following command to start the ZooKeeper service:
     ```bash
    .\bin\windows\zookeeper-server-start.bat .\config\zookeeper.properties
+4. **Open a New Command Prompt Window:**
+   - Navigate to the Kafka directory in a new command prompt window.
+5. **Start the Kafka broker service:**
+   - Execute the following command to start the Kafka broker service:
+    ```bash
+   .\bin\windows\kafka-server-start.bat .\config\server.properties
+
+
+
+
+
+
+
+
+
+
 
 <!--Event-driven architecture (EDA) is a software design pattern in which decoupled applications can asynchronously publish and subscribe to events via an event broker/message broker.
 
