@@ -1,6 +1,6 @@
 # Event-Driven_Microservices_SpringBoot_Kafka
 
-Event-driven architecture (EDA) is a software design pattern in which decoupled applications can asynchronously publish and subscribe to events via an event broker/message broker.
+<!--Event-driven architecture (EDA) is a software design pattern in which decoupled applications can asynchronously publish and subscribe to events via an event broker/message broker.
 
 1-Install and Setup Apache Kafka.
 2-go to the intalled Path
@@ -12,5 +12,5 @@ Event-driven architecture (EDA) is a software design pattern in which decoupled 
  .\bin\windows\kafka-server-start.bat .\config\server.properties
  -----------------------------
  OrderService  is producer
- EmailService && StockService are consumers
+ EmailService && StockService are consumers -->
  
