@@ -68,7 +68,54 @@ Event-driven architecture (EDA) is a software design pattern in which decoupled 
   - Bootstrap servers: localhost:9092
   - Consumer group ID: email
   - Topic name: order_topics
+ ```bash
+@Service
+public class OrderConsumer {
 
+    private static Logger logger = LoggerFactory.getLogger(OrderConsumer.class);
+
+    @KafkaListener(
+            topics = "${spring.kafka.topic.name}",
+            groupId = "${spring.kafka.consumer.group-id}")
+    public void consume(OrderEvent orderEvent) {
+        logger.info(String.format("Order Event Received in Email Service => %S ", orderEvent.toString()));
+
+        //send email to the customer
+    }
+}
+ ```
+# Service Explanation
+
+## Order Consumer Service
+- `@Service`: An annotation from the Spring framework indicating that this class is a service component managed by Spring. It is used to denote that this class performs a service-related function.
+
+### Dependencies
+- `private static Logger logger`: A logger instance provided by SLF4J (Simple Logging Facade for Java) for logging messages.
+- `@KafkaListener`: An annotation from Spring Kafka used to create Kafka message listener endpoints. It specifies the topics to listen to and the consumer group ID.
+  - `topics = "${spring.kafka.topic.name}"`: Defines the Kafka topic from which this consumer will consume messages. It retrieves the topic name from the application's configuration.
+  - `groupId = "${spring.kafka.consumer.group-id}"`: Specifies the consumer group ID for this consumer. It retrieves the group ID from the application's configuration.
+
+### Methods
+- `public void consume(OrderEvent orderEvent)`: A method annotated with `@KafkaListener` that defines the message processing logic for consuming Kafka messages. It takes an `OrderEvent` object as a parameter, representing the consumed message.
+  - `logger.info(String.format("Order Event Received in Email Service => %S ", orderEvent.toString()))`: Logs a message indicating that an order event has been received in the Email Service.
+  - `//send email to the customer`: Represents a placeholder comment indicating that the logic to send an email to the customer should be implemented here.
+
+# Configuration Explanation
+
+## Application Server Port
+- `server.port=8081`: Specifies the port on which the application server will listen for incoming HTTP requests. Here, it is configured to use port 8081.
+
+## Kafka Consumer Configuration
+- `spring.kafka.consumer.bootstrap-servers=localhost:9092`: Defines the list of Kafka brokers to which the Kafka consumer will connect. It specifies that the broker is running locally on port 9092.
+- `spring.kafka.consumer.group-id=email`: Specifies the consumer group ID for the Kafka consumer. This allows multiple consumers to coordinate and consume messages from Kafka topics efficiently. Here, it is set to "email".
+- `spring.kafka.consumer.auto-offset-reset=earliest`: Determines the starting offset for new consumer groups or when a consumer's offset is out of range. Setting it to "earliest" means that the consumer will start consuming messages from the earliest available offset.
+- `spring.kafka.consumer.key-deserializer=org.apache.kafka.common.serialization.StringDeserializer`: Specifies the deserializer to use for deserializing the keys of Kafka consumer records. Here, it uses the StringDeserializer provided by Apache Kafka.
+- `spring.kafka.consumer.value-deserializer=org.springframework.kafka.support.serializer.JsonDeserializer`: Specifies the deserializer to use for deserializing the values of Kafka consumer records. It uses the JsonDeserializer provided by Spring Kafka, which can deserialize JSON-formatted values into Java objects.
+- `spring.kafka.consumer.properties.spring.json.trusted.packages=*`: Configures trusted packages for deserialization when using the JsonDeserializer. In this case, it allows deserialization of JSON into objects from any package.
+  
+## Kafka Topic Name
+- `spring.kafka.topic.name=order_topics`: Sets the name of the Kafka topic from which the consumer will consume messages. Here, it is configured to consume messages from a topic named "order_topics".
+  
 ## order-service
 - **Java version:** 11
 - **Dependencies:** Spring Boot starter, Spring Kafka, base-domains
