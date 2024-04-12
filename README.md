@@ -193,7 +193,7 @@ public class OrderConsumer {
         //save the order event into the database
     }
 }
- ```bash
+ ```
 - `@Service`: An annotation from the Spring framework indicating that this class is a service component managed by Spring. It is used to denote that this class performs a service-related function.
 
 ### Dependencies
