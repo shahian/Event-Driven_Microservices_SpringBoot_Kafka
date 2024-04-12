@@ -77,7 +77,32 @@ Event-driven architecture (EDA) is a software design pattern in which decoupled 
   - Producer key serializer: String
   - Producer value serializer: Json
   - Topic name: order_topics
+# OrderProducer Class Explanation
 
+The `OrderProducer` class is a Spring `@Service` component responsible for producing messages to a Kafka topic within the application's event-driven architecture.
+
+## Key Points
+
+- **Spring Service**: This class is annotated with `@Service`, signifying that it's managed by the Spring framework as a service component.
+
+- **Responsibility**: The primary responsibility of `OrderProducer` is to produce messages to a Kafka topic, facilitating asynchronous communication between microservices.
+
+- **Dependencies**: 
+  - `NewTopic`: Represents a Kafka topic and is injected into the class for configuration.
+  - `KafkaTemplate<String, OrderEvent>`: This dependency is responsible for sending messages to Kafka topics.
+
+- **Logger Usage**: The `logger` object, an instance of the SLF4J `Logger` class, is utilized for logging messages, aiding in debugging and monitoring.
+
+- **Constructor**: The class constructor `OrderProducer(NewTopic newTopic, KafkaTemplate<String, OrderEvent> kafkaTemplate)` initializes the injected dependencies.
+
+- **sendMessage Method**: This method (`sendMessage(OrderEvent orderEvent)`) sends an `OrderEvent` message to the configured Kafka topic:
+  - It logs the order event using the logger.
+  - Utilizes `MessageBuilder` to create a Kafka message with the specified payload and topic.
+  - Sends the message to the Kafka topic using `kafkaTemplate.send`.
+
+## Overall Functionality
+
+The `OrderProducer` class abstracts away the complexity of interacting with Kafka, simplifying the process of producing messages within the event-driven architecture. Its encapsulation of Kafka-related functionalities allows other components to seamlessly send order events without the need for detailed Kafka-specific implementation.
 ## stock-service
 - **Java version:** 11
 - **Dependencies:** Spring Boot starter, Spring Kafka, base-domains
