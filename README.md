@@ -43,7 +43,18 @@ Event-driven architecture (EDA) is a software design pattern in which decoupled 
    - Execute the following command to start the Kafka broker service:
     ```bash
    .\bin\windows\kafka-server-start.bat .\config\server.properties
+# How to Use
 
+## Prerequisites
+- JDK 11 or higher installed
+- Apache Maven installed
+- Apache Kafka installed and configured
+
+## Getting Started
+
+1. **Clone the Repository:**
+   ```bash
+   git clone https://github.com/your-username/Event-Driven_Microservices_SpringBoot_Kafka.git
 
 
 
