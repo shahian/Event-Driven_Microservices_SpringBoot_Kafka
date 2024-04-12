@@ -158,7 +158,29 @@ The `KafkaTopicConfig` class is a Spring `@Configuration` component responsible 
 
 The `KafkaTopicConfig` class simplifies the configuration of Kafka topics within the application by providing a centralized mechanism. It dynamically creates Kafka topics based on application properties, ensuring consistency and flexibility in topic management. This promotes scalability and maintainability in the event-driven architecture.
 #### OrderController Class Explanation
+ ```bash
+@RestController
+@RequestMapping("/api")
+public class OrderController {
+    @Autowired
+    private OrderProducer orderProducer;
 
+    public OrderController(OrderProducer orderProducer) {
+        this.orderProducer = orderProducer;
+    }
+
+    @PostMapping("/v1/orders")
+    public String placeOrder(@RequestBody OrderDTO orderDTO){
+        orderDTO.setOrderId(UUID.randomUUID().toString());
+        OrderEvent orderEvent=new OrderEvent();
+        orderEvent.setOrder(orderDTO);
+        orderEvent.setStatus("PENDING");
+        orderEvent.setMessage("order status is in pending...");
+        orderProducer.sendMessage(orderEvent);
+        return "Order Placed Successfuly...";
+    }
+}
+ ```
 The `OrderController` class is a Spring `@RestController` responsible for handling incoming HTTP requests related to order operations.
 
 #### Key Points
@@ -177,7 +199,37 @@ The `OrderController` class is a Spring `@RestController` responsible for handli
 
 The `OrderController` class serves as the entry point for processing order-related requests in the application. It encapsulates the logic for creating and processing orders, interacting with the Kafka messaging system to publish order events. By handling order-related operations, it ensures seamless communication between clients and the underlying system, facilitating the event-driven architecture's functionality.
 #### OrderProducer Class Explanation
+ ```bash
 
+@Service
+public class OrderProducer {
+
+    private static Logger logger= LoggerFactory.getLogger(OrderProducer.class);
+
+    @Autowired
+    private NewTopic newTopic;
+
+    @Autowired
+    private KafkaTemplate<String, OrderEvent>kafkaTemplate;
+
+    public OrderProducer(NewTopic newTopic, KafkaTemplate<String, OrderEvent> kafkaTemplate) {
+        this.newTopic = newTopic;
+        this.kafkaTemplate = kafkaTemplate;
+    }
+
+    public void sendMessage(OrderEvent  orderEvent){
+        logger.info(String.format("Order Event => %S",orderEvent.toString()));
+
+        //create Message
+        Message<OrderEvent>message= MessageBuilder
+                .withPayload(orderEvent)
+                .setHeader(KafkaHeaders.TOPIC,  newTopic.name())
+                .build();
+
+        kafkaTemplate.send(message);
+    }
+}
+ ```
 The `OrderProducer` class is a Spring `@Service` component responsible for producing messages to a Kafka topic within the application's event-driven architecture.
 
 #### Key Points
