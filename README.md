@@ -79,6 +79,21 @@ Event-driven architecture (EDA) is a software design pattern in which decoupled 
   - Topic name: order_topics
  
 # KafkaTopicConfig Class Explanation
+ ```bash
+@Configuration
+public class KafkaTopicConfig {
+    @Value("${spring.kafka.topic.name}")
+    private String topicName;
+
+    //spring bean for Kafka
+    @Bean
+    public NewTopic newTopic() {
+        return TopicBuilder.name(topicName)
+//              .partitions(3)
+                .build();
+    }
+}
+ ```
 
 The `KafkaTopicConfig` class is a Spring `@Configuration` component responsible for configuring Kafka topics within the application.
 
