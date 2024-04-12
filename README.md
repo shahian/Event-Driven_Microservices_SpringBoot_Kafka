@@ -77,6 +77,43 @@ Event-driven architecture (EDA) is a software design pattern in which decoupled 
   - Producer key serializer: String
   - Producer value serializer: Json
   - Topic name: order_topics
+ 
+# KafkaTopicConfig Class Explanation
+
+The `KafkaTopicConfig` class is a Spring `@Configuration` component responsible for configuring Kafka topics within the application.
+
+## Key Points
+
+- **Bean Declaration**: The class declares a bean method `newTopic()` annotated with `@Bean`, which returns a `NewTopic` instance.
+  
+- **Dynamic Configuration**: The name of the Kafka topic is injected from the application properties using the `@Value` annotation on the `topicName` field.
+  
+- **Topic Creation**: Inside the `newTopic()` method, a new Kafka topic is created using the `TopicBuilder` utility provided by Spring Kafka. The name of the topic is set dynamically based on the injected `topicName`.
+  
+- **Optional Configuration**: Additional configurations, such as specifying the number of partitions, can be added by uncommenting and modifying the `.partitions()` method.
+
+## Overall Functionality
+
+The `KafkaTopicConfig` class simplifies the configuration of Kafka topics within the application by providing a centralized mechanism. It dynamically creates Kafka topics based on application properties, ensuring consistency and flexibility in topic management. This promotes scalability and maintainability in the event-driven architecture.
+# OrderController Class Explanation
+
+The `OrderController` class is a Spring `@RestController` responsible for handling incoming HTTP requests related to order operations.
+
+## Key Points
+
+- **Mapping**: The class is mapped to the `/api` endpoint, indicating that all requests handled by this controller will have the `/api` prefix.
+
+- **Dependencies Injection**: The `OrderController` class injects an instance of `OrderProducer` using the `@Autowired` annotation, allowing it to interact with the Kafka messaging system.
+
+- **Constructor Injection**: The `OrderController` class defines a constructor that accepts an `OrderProducer` instance. This constructor injection ensures that the `OrderController` is properly initialized with the required dependencies.
+
+- **Request Handling**: The `placeOrder` method is mapped to the `POST /v1/orders` endpoint. It receives an `OrderDTO` object as a request body, generates a unique order ID, creates an `OrderEvent` containing the order details, sets the status to "PENDING", and sends the order event to the Kafka topic using the `OrderProducer` instance.
+
+- **Response**: The method returns a string indicating the success of the order placement operation.
+
+## Overall Functionality
+
+The `OrderController` class serves as the entry point for processing order-related requests in the application. It encapsulates the logic for creating and processing orders, interacting with the Kafka messaging system to publish order events. By handling order-related operations, it ensures seamless communication between clients and the underlying system, facilitating the event-driven architecture's functionality.
 # OrderProducer Class Explanation
 
 The `OrderProducer` class is a Spring `@Service` component responsible for producing messages to a Kafka topic within the application's event-driven architecture.
